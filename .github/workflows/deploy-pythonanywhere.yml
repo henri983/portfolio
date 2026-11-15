@@ -16,42 +16,58 @@ jobs:
       - name: Validate required secrets
         shell: bash
         env:
-          PA_USERNAME: ${{ secrets.PA_USERNAME }}
-          PA_TOKEN: ${{ secrets.PA_TOKEN }}
-          PA_TARGET_DIR: ${{ secrets.PA_TARGET_DIR }}
-          PA_WEBAPP_DOMAIN: ${{ secrets.PA_WEBAPP_DOMAIN }}
+          RAW_USER: ${{ secrets.PA_USERNAME }}
+          RAW_TOKEN: ${{ secrets.PA_TOKEN }}
+          RAW_TARGET_DIR: ${{ secrets.PA_TARGET_DIR }}
+          RAW_DOMAIN: ${{ secrets.PA_WEBAPP_DOMAIN }}
         run: |
           missing=0
-          for name in PA_USERNAME PA_TOKEN PA_TARGET_DIR PA_WEBAPP_DOMAIN; do
-            if [[ -z "${!name}" ]]; then
-              echo "::error::Le secret ${name} est manquant. Ajoutez-le dans Settings → Secrets and variables → Actions."
+          for val in "${RAW_USER}" "${RAW_TOKEN}" "${RAW_TARGET_DIR}" "${RAW_DOMAIN}"; do
+            cleaned="$(echo -n "${val}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+            if [[ -z "${cleaned}" ]]; then
               missing=1
             fi
           done
           if [[ "$missing" -ne 0 ]]; then
-            echo "Il manque des secrets : c'est normal si vous venez de créer votre dépôt."
-            echo "Créez les 4 secrets (voir README), puis relancez ce workflow (Actions → Run workflow)."
+            echo "::error::Un ou plusieurs secrets requis sont manquants ou vides (PA_USERNAME, PA_TOKEN, PA_TARGET_DIR, PA_WEBAPP_DOMAIN)."
+            echo "Vérifiez vos secrets dans Settings → Secrets and variables → Actions, puis relancez ce workflow."
             exit 1
           fi
-          echo "Les 4 secrets sont bien présents ✅"
+          echo "Les 4 secrets requis sont bien présents ✅"
 
       - name: Upload all files recursively (dirs auto-created by Files API)
         shell: bash
+        env:
+          RAW_USER: ${{ secrets.PA_USERNAME }}
+          RAW_TOKEN: ${{ secrets.PA_TOKEN }}
+          RAW_TARGET_DIR: ${{ secrets.PA_TARGET_DIR }}
+          RAW_DOMAIN: ${{ secrets.PA_WEBAPP_DOMAIN }}
+          RAW_HOST: ${{ secrets.PA_HOST }}
         run: |
           set -euo pipefail
-          USER="${{ secrets.PA_USERNAME }}"
-          TOKEN="${{ secrets.PA_TOKEN }}"
-          TARGET_DIR="${{ secrets.PA_TARGET_DIR }}"
-          DOMAIN="${{ secrets.PA_WEBAPP_DOMAIN }}"
 
-          # Optional: set PA_HOST secret to "eu.pythonanywhere.com" if your account is on EU.
-          HOST="${{ secrets.PA_HOST }}"
-          if [[ -z "${HOST}" ]]; then HOST="www.pythonanywhere.com"; fi
+          # Nettoyage rigoureux : suppression stricte des sauts de ligne (\r, \n) et espaces parasites
+          USER="$(echo -n "${RAW_USER}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+          TOKEN="$(echo -n "${RAW_TOKEN}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+          TARGET_DIR="$(echo -n "${RAW_TARGET_DIR}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+          DOMAIN="$(echo -n "${RAW_DOMAIN}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+          HOST="$(echo -n "${RAW_HOST}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
 
-          echo "Using PythonAnywhere host: ${HOST}"
-          echo "Target directory: ${TARGET_DIR}"
+          if [[ -z "${HOST}" ]]; then 
+            HOST="www.pythonanywhere.com"
+          fi
 
-          # Upload every file; remote directories are created automatically by the Files API.
+          # Normalisation de TARGET_DIR (retrait du slash final, ajout du slash initial)
+          TARGET_DIR="${TARGET_DIR%/}"
+          if [[ "${TARGET_DIR}" != /* ]]; then
+            TARGET_DIR="/${TARGET_DIR}"
+          fi
+
+          echo "Utilisation de l'hôte PythonAnywhere : ${HOST}"
+          echo "Dossier cible distant : ${TARGET_DIR}"
+          echo "Domaine WebApp : ${DOMAIN}"
+
+          # Téléversement récursif de tous les fichiers du projet
           while IFS= read -r -d '' file; do
             rel="${file#./}"
 
@@ -61,14 +77,14 @@ jobs:
               *.pyc|.DS_Store|*.log) continue ;;
               preview.html|render_preview.mjs|serve.mjs|*.mjs) continue ;;
               *.png|*.jpg|*.jpeg)
-                # On conserve les assets dans static/, on ignore les captures d'écran à la racine
+                # On conserve les images dans static/, on ignore les captures d'écran à la racine
                 if [[ "$rel" != static/* ]]; then continue; fi
                 ;;
               exercices/*|*.md) continue ;;
             esac
 
             remote_path="${TARGET_DIR}/${rel}"
-            echo " - ${rel} -> ${remote_path}"
+            echo " -> Téléversement : ${rel} -> ${remote_path}"
 
             curl -sS --fail -X POST \
               -H "Authorization: Token ${TOKEN}" \
@@ -85,10 +101,10 @@ jobs:
                 -print0
           )
 
-          echo "Reloading webapp ${DOMAIN}..."
+          echo "Rechargement de l'application Web ${DOMAIN}..."
           curl -sS --fail -X POST \
             -H "Authorization: Token ${TOKEN}" \
             "https://${HOST}/api/v0/user/${USER}/webapps/${DOMAIN}/reload/" \
             >/dev/null
 
-          echo "Deployed. Try: https://${DOMAIN}"
+          echo "✅ Déploiement réussi ! Visitez : https://${DOMAIN}"
