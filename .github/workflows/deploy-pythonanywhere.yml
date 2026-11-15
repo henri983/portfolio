@@ -55,11 +55,15 @@ jobs:
           while IFS= read -r -d '' file; do
             rel="${file#./}"
 
-            # Exclusions (adjust to taste)
+            # Exclusions des dossiers système, caches et fichiers de dev local
             case "$rel" in
               .git/*|.github/*|.venv/*|__pycache__/*|node_modules/*) continue ;;
-              *.pyc|.DS_Store) continue ;;
-              # Les consignes de l'atelier n'ont pas besoin d'être sur le serveur
+              *.pyc|.DS_Store|*.log) continue ;;
+              preview.html|render_preview.mjs|serve.mjs|*.mjs) continue ;;
+              *.png|*.jpg|*.jpeg)
+                # On conserve les assets dans static/, on ignore les captures d'écran à la racine
+                if [[ "$rel" != static/* ]]; then continue; fi
+                ;;
               exercices/*|*.md) continue ;;
             esac
 
@@ -87,4 +91,4 @@ jobs:
             "https://${HOST}/api/v0/user/${USER}/webapps/${DOMAIN}/reload/" \
             >/dev/null
 
-          echo "Deployed. Try: https://${DOMAIN}/"
+          echo "Deployed. Try: https://${DOMAIN}"
