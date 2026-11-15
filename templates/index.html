@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ profile.name }} | {{ profile.role }}</title>
+
+  <!-- Polices Google : Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Feuille de style personnalisée -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen relative font-sans antialiased selection:bg-slate-900 selection:text-white">
+
+  <!-- =========================================================================
+       1. EN-TÊTE PROFESSIONNEL ÉPURÉ (STYLE LINEAR / VERCEL)
+       ========================================================================= -->
+  <header class="exec-header">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+
+      <!-- Zone Gauche : Monogramme & Nom -->
+      <a href="#hero" class="flex items-center gap-2.5 shrink-0 group">
+        <div class="w-8 h-8 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shadow-sm">
+          HN
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm text-slate-900 group-hover:text-blue-600 transition-colors">
+            Henri Nyame
+          </span>
+          <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono text-slate-600 bg-slate-100 border border-slate-200">
+            DevOps
+          </span>
+        </div>
+      </a>
+
+      <!-- Zone Centrale : Liens de Navigation avec Pilule Frosted -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100/90 p-1 rounded-full border border-slate-200/80 text-xs font-semibold text-slate-600 shadow-sm">
+        <a href="#hero" class="px-3.5 py-1.5 rounded-full hover:text-slate-900 hover:bg-white transition-all">Profil</a>
+        <a href="#valeur" class="px-3.5 py-1.5 rounded-full hover:text-slate-900 hover:bg-white transition-all">Compétences</a>
+        <a href="#projets" class="px-3.5 py-1.5 rounded-full hover:text-slate-900 hover:bg-white transition-all flex items-center gap-1.5">
+          <span>Réalisations</span>
+          <span class="text-[10px] font-mono bg-white px-1.5 py-0.2 rounded-full border border-slate-200 text-slate-700 font-bold">25</span>
+        </a>
+        <a href="#contact" class="px-3.5 py-1.5 rounded-full hover:text-slate-900 hover:bg-white transition-all">Contact</a>
+      </nav>
+
+      <!-- Zone Droite : Statut & Action -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200/80">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Disponible</span>
+        </div>
+
+        <a href="#contact" class="btn-hire text-xs py-2 px-3.5 whitespace-nowrap">
+          <span>Me contacter</span>
+          <span class="font-mono text-[10px]">→</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- =========================================================================
+         2. HERO SECTION : PROPOSITION DE VALEUR CANDIDAT & CHIFFRES CLÉS
+         ========================================================================= -->
+    <section id="hero" class="pt-16 pb-20 px-4 max-w-5xl mx-auto">
+      <div class="max-w-3xl">
+        <!-- Badge Disponibilité & Mobilité -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-mono font-medium mb-6">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+          <span>PARIS, FRANCE • MOBILITÉ HYBRIDE / PRÉSENTIEL</span>
+        </div>
+
+        <!-- Titre Principal -->
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15] mb-6">
+          Administrateur d'infrastructures sécurisées & DevOps.
+        </h1>
+
+        <p class="text-base sm:text-lg text-slate-600 font-normal leading-relaxed mb-8">
+          Je conçois et maintiens des architectures systèmes hautement résilientes : <strong>détection proactive des intrusions (SIEM Wazuh & OpenSearch)</strong>, <strong>durcissement d'environnements Linux (CIS Benchmarks L2)</strong> et <strong>automatisation intégrale des déploiements par Ansible & CI/CD</strong>.
+        </p>
+
+        <!-- Boutons d'Action Recrutement -->
+        <div class="flex flex-wrap items-center gap-3.5 mb-12">
+          <a href="#contact" class="btn-hire">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+            <span>Discuter d'une opportunité d'embauche</span>
+          </a>
+
+          <a href="{{ profile.github }}" target="_blank" rel="noopener noreferrer" class="btn-outline">
+            <i data-lucide="github" class="w-4 h-4"></i>
+            <span>Dépôts GitHub vérifiés</span>
+            <span class="font-mono text-xs">↗</span>
+          </a>
+
+          <a href="{{ profile.linkedin }}" target="_blank" rel="noopener noreferrer" class="btn-outline">
+            <i data-lucide="linkedin" class="w-4 h-4 text-blue-600"></i>
+            <span>Profil LinkedIn</span>
+          </a>
+        </div>
+
+        <!-- Fiche Synthétique Candidat (Centrée et bien répartie) -->
+        <div class="w-full mt-10 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+            <div class="text-center px-3 py-2 flex flex-col justify-center items-center">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold block">Disponibilité</span>
+              <span class="text-xs sm:text-sm font-bold text-slate-900 mt-1 block">Immédiate</span>
+            </div>
+            <div class="text-center px-3 py-2 flex flex-col justify-center items-center pt-3 sm:pt-2">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold block">Contrat visé</span>
+              <span class="text-xs sm:text-sm font-bold text-slate-900 mt-1 block">Stage / Alternance / CDI</span>
+            </div>
+            <div class="text-center px-3 py-2 flex flex-col justify-center items-center pt-3 sm:pt-2">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold block">Expertise clé</span>
+              <span class="text-xs sm:text-sm font-bold text-slate-900 mt-1 block whitespace-nowrap">SIEM • Linux • Docker</span>
+            </div>
+            <div class="text-center px-3 py-2 flex flex-col justify-center items-center pt-3 sm:pt-2">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold block">Projets publics</span>
+              <span class="text-xs sm:text-sm font-bold text-slate-900 mt-1 block">{{ projects|length }} Dépôts audités</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================================
+         3. CE QUE J'APPORTE CONCRÈTEMENT À VOTRE ÉQUIPE TECHNIQUE
+         ========================================================================= -->
+    <section id="valeur" class="py-16 px-4 max-w-5xl mx-auto border-t border-slate-200">
+      <div class="mb-10">
+        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">
+          Ce que j'apporte à votre organisation technique
+        </h2>
+        <p class="text-sm text-slate-600 mt-1">
+          Quatre compétences fondamentales pour garantir la disponibilité, la sécurité et la vélocité de vos systèmes.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Pilier 1 -->
+        <div class="hire-card flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 mb-2">
+              Détection & Réponse aux Incidents (SIEM Wazuh)
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+              Mise en place de plateformes de surveillance continue (Wazuh, OpenSearch, Filebeat) pour détecter les intrusions, surveiller l'intégrité des fichiers critiques (FIM) et corréler les alertes de sécurité en temps réel.
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 text-xs font-mono text-slate-500">
+            Stack : Wazuh • OpenSearch • Suricata • Auditd
+          </div>
+        </div>
+
+        <!-- Pilier 2 -->
+        <div class="hire-card flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-4">
+              <i data-lucide="lock" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 mb-2">
+              Durcissement Systèmes & Conformité CIS L2
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+              Sécurisation avancée des serveurs Linux (Debian, Ubuntu) selon les recommandations du CIS Benchmark : cloisonnement UFW/iptables, authentification SSH stricte par clés, audit Lynis automatisé et conformité RGPD.
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 text-xs font-mono text-slate-500">
+            Stack : Linux Hardening • CIS Benchmark • UFW • Lynis
+          </div>
+        </div>
+
+        <!-- Pilier 3 -->
+        <div class="hire-card flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-4">
+              <i data-lucide="workflow" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 mb-2">
+              Automatisation Ansible & Pipelines DevOps
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+              Industrialisation des configurations serveurs et intégration de la sécurité dans les workflows CI/CD (GitHub Actions) avec analyse statique de vulnérabilités (Trivy, SAST).
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 text-xs font-mono text-slate-500">
+            Stack : Ansible • GitHub Actions • Python 3.12 • Trivy
+          </div>
+        </div>
+
+        <!-- Pilier 4 -->
+        <div class="hire-card flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 mb-4">
+              <i data-lucide="server" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 mb-2">
+              Conteneurisation Docker & Observabilité HA
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+              Déploiement d'environnements conteneurisés sécurisés avec Docker Compose, passerelles Nginx avec certificats TLS 1.3 auto-renouvelés, métrologie Prometheus et tableaux de bord d'alertes Grafana.
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 text-xs font-mono text-slate-500">
+            Stack : Docker • Nginx • Prometheus • Grafana • ELK
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================================
+         4. RÉALISATIONS TECHNIQUES & PROJETS AUDITÉS (PREUVES SUR GITHUB)
+         ========================================================================= -->
+    <section id="projets" class="py-16 px-4 max-w-5xl mx-auto border-t border-slate-200">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900 tracking-tight">
+            Réalisations & Dépôts Techniques Audités
+          </h2>
+          <p class="text-sm text-slate-600 mt-1">
+            {{ projects|length }} projets opérationnels documentés avec code source accessible pour attester de mes compétences réelles.
+          </p>
+        </div>
+      </div>
+
+      <!-- Filtres par catégorie -->
+      <div class="flex flex-wrap items-center gap-1.5 p-1 rounded-lg bg-slate-200/60 border border-slate-200 mb-8 max-w-fit" id="project-filters">
+        <button class="tab-filter active" data-filter="all">Tous les projets ({{ projects|length }})</button>
+        <button class="tab-filter" data-filter="Cybersécurité">Cybersécurité & SIEM</button>
+        <button class="tab-filter" data-filter="Infrastructure">Infrastructure & Cloud</button>
+        <button class="tab-filter" data-filter="Automatisation">Automatisation & DevOps</button>
+        <button class="tab-filter" data-filter="Application">Applications</button>
+      </div>
+
+      <!-- Grille des Projets -->
+      <div class="space-y-6" id="projects-container">
+        {% for project in projects %}
+        <div class="hire-card project-card transition-all" data-category="{{ project.badge }}">
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="px-2 py-0.5 rounded text-[11px] font-semibold font-mono bg-slate-100 text-slate-700 border border-slate-200">
+                  {{ project.badge }}
+                </span>
+                <span class="text-xs font-mono text-slate-400">
+                  #{{ "%02d"|format(project.rank) }}
+                </span>
+                <span class="text-xs text-slate-300">•</span>
+                <span class="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  {{ project.stage }}
+                </span>
+              </div>
+
+              <h3 class="text-lg font-bold text-slate-900 tracking-tight">
+                {{ project.title }}
+              </h3>
+              <p class="text-xs font-medium text-slate-500 mt-0.5">
+                {{ project.subtitle }}
+              </p>
+            </div>
+
+            <!-- Liens directs Code Source & Démo -->
+            <div class="flex items-center gap-2 shrink-0">
+              {% if project.live_url %}
+              <a href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer" class="btn-outline py-1.5 px-3 text-xs">
+                <span>Démo en ligne</span>
+                <span class="font-mono text-[10px]">↗</span>
+              </a>
+              {% endif %}
+              <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="btn-outline py-1.5 px-3 text-xs">
+                <i data-lucide="github" class="w-3.5 h-3.5"></i>
+                <span class="font-mono text-[11px]">{{ project.repo }}</span>
+                <span class="font-mono text-[10px]">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+            {{ project.description }}
+          </p>
+
+          <!-- Tags Techniques -->
+          <div class="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-100">
+            {% for tag in project.tags %}
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-50 text-slate-600 border border-slate-200">
+              {{ tag }}
+            </span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+
+    <!-- =========================================================================
+         5. FORMULAIRE DE RECRUTEMENT / PRISE DE CONTACT DIRECTE
+         ========================================================================= -->
+    <section id="contact" class="py-16 px-4 max-w-5xl mx-auto border-t border-slate-200">
+      <div class="hire-card p-8 sm:p-10 border-2 border-slate-900">
+        <div class="max-w-xl">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-100 text-slate-800 text-xs font-mono font-medium mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>CONTACT RECRUTEMENT DIRECT</span>
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+            Discutons d'un poste ou d'une mission
+          </h2>
+          <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+            Vous avez une opportunité en administration système, DevOps ou cybersécurité ? Je suis immédiatement joignable par e-mail, téléphone ou LinkedIn.
+          </p>
+
+          <div class="flex flex-wrap gap-3 mb-8">
+            <a href="mailto:{{ profile.email }}" class="btn-hire">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+              <span>{{ profile.email }}</span>
+            </a>
+            <a href="{{ profile.linkedin }}" target="_blank" rel="noopener noreferrer" class="btn-outline">
+              <i data-lucide="linkedin" class="w-4 h-4 text-blue-600"></i>
+              <span>Profil LinkedIn</span>
+            </a>
+            <a href="{{ profile.github }}" target="_blank" rel="noopener noreferrer" class="btn-outline">
+              <i data-lucide="github" class="w-4 h-4"></i>
+              <span>GitHub</span>
+            </a>
+          </div>
+
+          <!-- Formulaire de contact pour recruteur -->
+          <form id="recruiter-form" class="space-y-4 pt-6 border-t border-slate-200">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="name" class="block text-xs font-semibold text-slate-700 mb-1">Votre nom / Recruteur *</label>
+                <input type="text" id="name" required placeholder="Ex: Thomas Laurent" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-slate-900 transition-colors">
+              </div>
+              <div>
+                <label for="company" class="block text-xs font-semibold text-slate-700 mb-1">Entreprise *</label>
+                <input type="text" id="company" required placeholder="Ex: Société Générale / FinTech" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-slate-900 transition-colors">
+              </div>
+            </div>
+
+            <div>
+              <label for="email" class="block text-xs font-semibold text-slate-700 mb-1">E-mail professionnel *</label>
+              <input type="email" id="email" required placeholder="recrutement@entreprise.com" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-slate-900 transition-colors">
+            </div>
+
+            <div>
+              <label for="message" class="block text-xs font-semibold text-slate-700 mb-1">Détails du poste ou message *</label>
+              <textarea id="message" rows="3" required placeholder="Description du poste, contexte technique ou créneaux souhaités pour un premier échange..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-slate-900 transition-colors"></textarea>
+            </div>
+
+            <button type="submit" class="btn-hire w-full sm:w-auto">
+              <span>Transmettre l'opportunité d'entretien</span>
+              <span class="font-mono text-xs">→</span>
+            </button>
+          </form>
+
+          <div id="contact-response" class="hidden mt-4"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       6. PIED DE PAGE PROFESSIONNEL
+       ========================================================================= -->
+  <footer class="border-t border-slate-200 py-8 px-4 max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+    <div class="flex items-center gap-2">
+      <span class="font-bold text-slate-900">{{ profile.name }}</span>
+      <span>•</span>
+      <span>Paris, France</span>
+      <span>•</span>
+      <span>© 2026</span>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <a href="{{ profile.github }}" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors">GitHub</a>
+      <a href="{{ profile.linkedin }}" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors">LinkedIn</a>
+      <a href="mailto:{{ profile.email }}" class="hover:text-slate-900 transition-colors">E-mail</a>
+    </div>
+
+    <div class="font-mono text-[11px] text-slate-400">
+      Production WSGI • PythonAnywhere
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    lucide.createIcons();
+  </script>
+  <script src="{{ url_for('static', filename='js/motion.js') }}"></script>
+</body>
+</html>
