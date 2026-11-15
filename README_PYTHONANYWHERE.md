@@ -1,6 +1,8 @@
-# 🚀 Déploiement de votre Portfolio MotionSites sur PythonAnywhere
+# 🚀 Déploiement Automatisé du Portfolio sur PythonAnywhere
 
-Ce projet est une application **Flask** optimisée pour une intégration directe sur [PythonAnywhere](https://www.pythonanywhere.com/). Il utilise le système de design **MotionSites** (Dark Mode profond, glassmorphism, cartes 3D tilt et bordures luminescentes interactives au survol).
+Ce projet est une application **Flask** optimisée pour une mise en production sur [PythonAnywhere](https://www.pythonanywhere.com/).
+
+Le déploiement est **100% automatisé** grâce au workflow GitHub Actions (`.github/workflows/deploy.yml`) : chaque `git push` sur la branche `main` téléverse vos fichiers et recharge automatiquement votre application web via l'API officielle de PythonAnywhere !
 
 ---
 
@@ -8,45 +10,60 @@ Ce projet est une application **Flask** optimisée pour une intégration directe
 
 ```text
 portfolio/
-├── flask_app.py               # Application Flask principale (profil, projets, compétences, API contact)
+├── .github/
+│   └── workflows/
+│       └── deploy.yml         # Pipeline CI/CD de déploiement automatique
+├── flask_app.py               # Application Flask principale (profil, projets réels, API contact)
 ├── wsgi.py                    # Point d'entrée WSGI standard pour PythonAnywhere
 ├── requirements.txt           # Dépendances (Flask, Gunicorn)
-├── README_PYTHONANYWHERE.md   # Ce guide de déploiement pas à pas
+├── README_PYTHONANYWHERE.md   # Ce guide de configuration
 ├── templates/
-│   └── index.html             # Template HTML cinématique MotionSites
+│   └── index.html             # Template HTML professionnel orienté recrutement
 └── static/
     ├── css/
-    │   └── style.css          # Tokens MotionSites, glassmorphism, bordures luminescentes
+    │   └── style.css          # Design system épuré & réactif
     └── js/
-        └── motion.js          # Moteur de physique 3D tilt, spotlight curseur & AJAX
+        └── motion.js          # Filtres interactifs et formulaire de contact
 ```
 
 ---
 
-## ⚡ Guide de déploiement en 5 étapes sur PythonAnywhere
+## ⚡ Configuration du Déploiement Automatique (GitHub Actions)
 
-### Étape 1 : Téléverser le dossier sur PythonAnywhere
+Pour que GitHub puisse téléverser vos fichiers et recharger PythonAnywhere à chaque `push`, configurez les **4 secrets** sur GitHub :
+
+### 1. Générer votre API Token sur PythonAnywhere
 1. Connectez-vous à votre compte [PythonAnywhere](https://www.pythonanywhere.com/).
-2. Ouvrez un terminal **Bash** (via le tableau de bord *Consoles > Bash*).
-3. Clonez votre dépôt ou téléversez le dossier `portfolio` dans votre répertoire personnel `/home/<votre_nom_utilisateur>/portfolio`.
+2. Allez dans **Account** (en haut à droite) → onglet **API token**.
+3. Cliquez sur **Create a new API token** (ou copiez votre token existant).
 
-### Étape 2 : Installer Flask
-Dans la console Bash de PythonAnywhere, exécutez simplement :
+### 2. Ajouter les Secrets dans votre dépôt GitHub
+Dans votre dépôt GitHub (`https://github.com/henri983/portfolio`), allez dans :
+**Settings** → **Secrets and variables** → **Actions** → **New repository secret** et ajoutez :
+
+| Nom du Secret | Description | Exemple de Valeur |
+|---|---|---|
+| `PA_USERNAME` | Votre nom d'utilisateur PythonAnywhere | `henri983` |
+| `PA_TOKEN` | Votre token API PythonAnywhere | `a1b2c3d4e5f6...` |
+| `PA_TARGET_DIR` | Chemin cible sur PythonAnywhere | `/home/henri983/portfolio` |
+| `PA_WEBAPP_DOMAIN` | Domaine de votre WebApp PythonAnywhere | `henri983.pythonanywhere.com` |
+| `PA_HOST` *(optionnel)* | Hôte API (si compte EU) | `www.pythonanywhere.com` (par défaut) |
+
+---
+
+## ⚙️ Configuration initiale sur PythonAnywhere (à faire une seule fois)
+
+### 1. Installer Flask
+Dans une console **Bash** sur PythonAnywhere :
 ```bash
-cd ~/portfolio
-pip install -r requirements.txt
+pip install -r /home/<votre_nom_utilisateur>/portfolio/requirements.txt
 ```
 
-### Étape 3 : Créer l'application Web
-1. Allez dans l'onglet **Web** de votre tableau de bord PythonAnywhere.
-2. Cliquez sur **Add a new web app**.
-3. Choisissez **Manual configuration** (ou sélectionnez Python 3.10, 3.11 ou 3.12).
-
-### Étape 4 : Configurer les chemins et le fichier WSGI
-Dans la page de configuration de votre application Web :
-1. **Source code** : saisissez `/home/<votre_nom_utilisateur>/portfolio`
-2. **Working directory** : saisissez `/home/<votre_nom_utilisateur>/portfolio`
-3. **WSGI configuration file** : cliquez sur le lien du fichier (ex: `/var/www/<username>_pythonanywhere_com_wsgi.py`), effacez son contenu par défaut et remplacez-le par :
+### 2. Configurer la WebApp dans l'onglet "Web"
+Dans l'onglet **Web** de votre tableau de bord PythonAnywhere :
+1. **Source code** : `/home/<votre_nom_utilisateur>/portfolio`
+2. **Working directory** : `/home/<votre_nom_utilisateur>/portfolio`
+3. **WSGI configuration file** : cliquez sur le lien du fichier (ex: `/var/www/<username>_pythonanywhere_com_wsgi.py`), effacez son contenu et remplacez par :
 ```python
 import sys
 import os
@@ -57,18 +74,18 @@ if path not in sys.path:
 
 from flask_app import app as application
 ```
-*(Pensez à remplacer `<votre_nom_utilisateur>` par votre vrai nom d'utilisateur PythonAnywhere).*
-
-### Étape 5 : Recharger et admirer
-Cliquez sur le gros bouton vert **Reload <username>.pythonanywhere.com** en haut de la page.
-Visitez ensuite votre URL : votre portfolio cinématique est en ligne ! 🎉
 
 ---
 
-## 🎨 Personnaliser vos données
-Tout se configure directement dans le fichier `flask_app.py` :
-- **`PROFILE`** : votre nom, votre titre, votre bio, vos réseaux sociaux.
-- **`SKILLS`** : vos compétences, métriques et catégories de votre Bento Grid.
-- **`PROJECTS`** : vos réalisations avec tags, descriptions, liens de démo et dépôts GitHub.
+## 🚀 Déclencher le déploiement
 
-Les modifications prennent effet immédiatement après avoir cliqué sur **Reload** dans PythonAnywhere.
+Dès que vos secrets sont enregistrés :
+1. Faites simplement un commit et push :
+   ```bash
+   git add .
+   git commit -m "feat: automated deployment workflow"
+   git push origin main
+   ```
+2. Ou allez dans l'onglet **Actions** sur GitHub et cliquez sur **Run workflow**.
+
+Le workflow téléverse vos fichiers de manière récursive via l'API Files et appelle l'API `/reload/`. Votre portfolio est mis à jour en direct !

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+.env
+.env.*
+!.env.example
+/*.png
+preview.html
+render_preview.mjs
+serve.mjs
+requierements.txt
